@@ -702,7 +702,14 @@ async function render() {
     bindSearch();
   } else if (route === "/sugerir") {
     app.innerHTML = suggestionPage();
-    app.querySelector("#suggestion-form").addEventListener("submit", async (event) => {
+    const suggestionForm = app.querySelector("#suggestion-form");
+    suggestionForm.querySelectorAll('input[name="categories"]').forEach((input) => {
+      const option = input.closest(".category-option");
+      const updateOption = () => option.classList.toggle("is-selected", input.checked);
+      updateOption();
+      input.addEventListener("change", updateOption);
+    });
+    suggestionForm.addEventListener("submit", async (event) => {
       event.preventDefault();
       const form = event.currentTarget;
       const data = Object.fromEntries(new FormData(form));
@@ -739,6 +746,26 @@ async function render() {
     else window.scrollTo({ top: 0, behavior: "smooth" });
   }
 }
+
+const themeToggle = document.querySelector("#theme-toggle");
+
+function applyTheme(theme) {
+  document.documentElement.dataset.theme = theme;
+  const dark = theme === "dark";
+  themeToggle.setAttribute("aria-label", dark ? "Ativar tema claro" : "Ativar tema escuro");
+  themeToggle.setAttribute("title", dark ? "Usar tema claro" : "Usar tema escuro");
+  document.querySelector('meta[name="theme-color"]')?.setAttribute("content", dark ? "#10201b" : "#183c36");
+}
+
+const savedTheme = localStorage.getItem("descarte-certo-theme");
+const preferredTheme = savedTheme || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+applyTheme(preferredTheme);
+
+themeToggle.addEventListener("click", () => {
+  const nextTheme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+  localStorage.setItem("descarte-certo-theme", nextTheme);
+  applyTheme(nextTheme);
+});
 
 menuToggle.addEventListener("click", () => {
   const open = nav.classList.toggle("is-open");
