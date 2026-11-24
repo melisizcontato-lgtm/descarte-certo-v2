@@ -8,8 +8,12 @@ const DATA_DIR = path.join(ROOT, "data");
 const DATA_FILE = path.join(DATA_DIR, "points.json");
 const FEEDBACK_FILE = path.join(DATA_DIR, "feedback.json");
 const PORT = Number(process.env.PORT) || 3000;
+const IS_PRODUCTION = process.env.NODE_ENV === "production";
 const ADMIN_USER = process.env.ADMIN_USER || "admin";
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "Descarte@2026";
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || (IS_PRODUCTION ? "" : "Descarte@2026");
+if (IS_PRODUCTION && (!ADMIN_PASSWORD || ADMIN_PASSWORD === "Descarte@2026")) {
+  throw new Error("Configure uma senha administrativa forte em ADMIN_PASSWORD antes de iniciar em produção.");
+}
 const PASSWORD_SALT = crypto.randomBytes(16);
 const PASSWORD_HASH = crypto.scryptSync(ADMIN_PASSWORD, PASSWORD_SALT, 64);
 const SESSION_TTL_MS = 8 * 60 * 60 * 1000;
@@ -18,7 +22,7 @@ const loginAttempts = new Map();
 const feedbackSubmissions = new Map();
 const CATEGORIES = ["Eletrônicos", "Pilhas e baterias", "Óleo de cozinha", "Roupas e tecidos", "Móveis", "Recicláveis", "Outros"];
 const MAX_BODY_BYTES = 32 * 1024;
-const NOMINATIM_CONTACT = process.env.NOMINATIM_CONTACT || "http://localhost:3000/";
+const NOMINATIM_CONTACT = process.env.NOMINATIM_CONTACT || process.env.RENDER_EXTERNAL_URL || "http://localhost:3000/";
 const NOMINATIM_USER_AGENT = `DescarteCerto/1.0 (${NOMINATIM_CONTACT})`;
 const OVERPASS_URLS = [...new Set([
   process.env.OVERPASS_URL,
@@ -619,5 +623,5 @@ const server = http.createServer(async (req, res) => {
 server.listen(PORT, "0.0.0.0", () => {
   console.log(`Descarte Certo disponível em http://localhost:${PORT}`);
   console.log(`Usuário administrativo: ${ADMIN_USER}`);
-  if (ADMIN_PASSWORD === "Descarte@2026") console.warn("Usando senha de apresentação. Configure ADMIN_PASSWORD antes de expor o servidor à rede.");
+  if (!IS_PRODUCTION && ADMIN_PASSWORD === "Descarte@2026") console.warn("Usando senha de apresentação. Configure ADMIN_PASSWORD antes de expor o servidor à rede.");
 });

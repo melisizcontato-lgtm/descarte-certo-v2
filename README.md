@@ -46,3 +46,14 @@ Para a apresentação local inicial, o acesso padrão é `admin` / `Descarte@202
 ## Notas de implantação
 
 As sessões administrativas usam cookies `HttpOnly` e `SameSite=Strict`, expiram após oito horas e são limitadas após tentativas inválidas. O armazenamento JSON é uma opção simples para apresentação local ou uso de baixo volume; para múltiplos servidores ou operação de produção, prefira um banco de dados gerenciado e coloque o serviço atrás de HTTPS. Em `NODE_ENV=production`, o cookie da sessão recebe o atributo `Secure`.
+
+### Publicar no Render
+
+O arquivo `render.yaml` configura o serviço web gratuito do Render. Para publicar:
+
+1. Abra [o Blueprint do Render para este repositório](https://dashboard.render.com/blueprint/new?repo=https%3A%2F%2Fgithub.com%2Fmelisizcontato-lgtm%2Frecicla-certo-v2) e entre na sua conta.
+2. Conecte o GitHub e selecione o repositório `recicla-certo-v2`.
+3. Quando solicitado, defina `ADMIN_PASSWORD` como uma senha forte e exclusiva; não use a senha de apresentação.
+4. Confirme a criação do serviço. Ao terminar, o Render mostrará o link público `https://...onrender.com`.
+
+O plano gratuito pode suspender o serviço após períodos sem acesso, então a primeira visita depois de um tempo parado pode demorar enquanto ele inicia. Os arquivos JSON ficam no disco temporário do serviço gratuito e podem ser apagados em uma nova implantação ou reinicialização; não use esse armazenamento para dados que precisem ser preservados. Para manter cadastros e avaliações em produção, configure armazenamento persistente ou migre para um banco de dados.
