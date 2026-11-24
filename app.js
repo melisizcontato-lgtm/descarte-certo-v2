@@ -382,13 +382,16 @@ function detailPage(id) {
 }
 
 function adminLoginPage() {
+  const credentialsHint = ["localhost", "127.0.0.1"].includes(window.location.hostname)
+    ? 'Acesso de apresentação local: <strong>admin</strong> / <strong>Descarte@2026</strong>. Configure credenciais próprias com as variáveis <code>ADMIN_USER</code> e <code>ADMIN_PASSWORD</code>.'
+    : 'Use o usuário e a senha administrativa configurados nas variáveis <code>ADMIN_USER</code> e <code>ADMIN_PASSWORD</code> do Render. As credenciais locais de apresentação não funcionam no site publicado.';
   return `<section class="page-shell"><div class="container admin-login-wrap">
     <div class="breadcrumbs"><a href="#/">Início</a><span>›</span><span>Área administrativa</span></div>
     <form class="content-card admin-login" id="admin-login"><span class="eyebrow"><span class="eyebrow-dot"></span>Acesso restrito</span><h1>Área administrativa</h1><p>Entre para revisar sugestões e gerenciar os pontos de coleta publicados.</p>
       <div class="field"><label for="admin-user">Usuário</label><input id="admin-user" name="username" autocomplete="username" required></div>
       <div class="field"><label for="admin-password">Senha</label><input id="admin-password" name="password" type="password" autocomplete="current-password" required></div>
       <button class="button button-blue" type="submit" style="width:100%">Entrar na área administrativa</button>
-      <div class="demo-credentials">Acesso de apresentação: <strong>admin</strong> / <strong>Descarte@2026</strong>. Configure credenciais próprias com as variáveis <code>ADMIN_USER</code> e <code>ADMIN_PASSWORD</code>.</div>
+      <div class="demo-credentials">${credentialsHint}</div>
     </form>
   </div></section>`;
 }
